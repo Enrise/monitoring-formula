@@ -1,0 +1,279 @@
+<?xml version="1.0" ?>
+<zabbix_export>
+   <version>4.4</version>
+   <date>2020-01-28T11:58:24Z</date>
+   <groups>
+      <group>
+         <name>Templates</name>
+      </group>
+   </groups>
+   <templates>
+      <template>
+         <template>Template App Salt-Minion</template>
+         <name>Template App Salt-Minion</name>
+         <groups>
+            <group>
+               <name>Templates</name>
+            </group>
+         </groups>
+         <applications>
+            <application>
+               <name>Saltstack</name>
+            </application>
+         </applications>
+         <items>
+            <item>
+               <name>Number of salt-minion processes</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>proc.num[salt-minion]</key>
+               <delay>5m</delay>
+               <history>7d</history>
+               <trends>30d</trends>
+               <applications>
+                  <application>
+                     <name>Saltstack</name>
+                  </application>
+               </applications>
+               <request_method>POST</request_method>
+               <triggers>
+                  <trigger>
+                     <expression>{max(#3)}=0</expression>
+                     <name>Salt-minion not running on {HOST.NAME}</name>
+                     <priority>AVERAGE</priority>
+                  </trigger>
+               </triggers>
+            </item>
+            <item>
+               <name>Salt-minion version</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>salt.minion.version</key>
+               <delay>1h</delay>
+               <history>7d</history>
+               <trends>0</trends>
+               <value_type>CHAR</value_type>
+               <applications>
+                  <application>
+                     <name>Saltstack</name>
+                  </application>
+               </applications>
+               <request_method>POST</request_method>
+            </item>
+            <item>
+               <name>Number of changed states</name>
+               <type>TRAP</type>
+               <key>salt[changed_states]</key>
+               <delay>0</delay>
+               <history>7d</history>
+               <trends>30d</trends>
+               <applications>
+                  <application>
+                     <name>Saltstack</name>
+                  </application>
+               </applications>
+               <request_method>POST</request_method>
+               <triggers>
+                  <trigger>
+                     <expression>{now()} - {last()} &gt; 24h</expression>
+                     <name>{ITEM.VALUE} changed Salt states on {HOST.NAME} for &gt; 24 hours</name>
+		     <url/>
+                     <status>DISABLED</status>
+                     <priority>WARNING</priority>
+                     <description>There have been changes for the past 24 hours on this machine which may indicate the state applied is not idempotent. Please check your states!</description>
+                     <dependencies>
+                        <dependency>
+                           <name>Last Salt highstate &gt;24h on {HOST.NAME}</name>
+                           <expression>{Template App Salt-Minion:vfs.file.time[{$SALT_CACHE_PATH}highstate.cache.p,modify].now()} - {Template App Salt-Minion:vfs.file.time[{$SALT_CACHE_PATH}highstate.cache.p,modify].last()} &gt; 24h</expression>
+                        </dependency>
+                        <dependency>
+                           <name>Salt-minion not running on {HOST.NAME}</name>
+                           <expression>{Template App Salt-Minion:proc.num[salt-minion].max(#3)}=0</expression>
+                        </dependency>
+                     </dependencies>
+                     <tags>
+                        <tag>
+                           <tag>salt-provisioning</tag>
+                        </tag>
+                     </tags>
+                  </trigger>
+               </triggers>
+            </item>
+            <item>
+               <name>Number of failed states</name>
+               <type>TRAP</type>
+               <key>salt[failed_states]</key>
+               <delay>0</delay>
+               <history>7d</history>
+               <trends>30d</trends>
+               <applications>
+                  <application>
+                     <name>Saltstack</name>
+                  </application>
+               </applications>
+               <request_method>POST</request_method>
+               <triggers>
+                  <trigger>
+                     <expression>{min(90m)} &gt; 0</expression>
+                     <name>{ITEM.VALUE} failed Salt states on {HOST.NAME} for &gt; 90 minutes</name>
+		     <url/>
+                     <priority>AVERAGE</priority>
+                     <description>Provisioning of this machine has been failing for the past 90 minutes.</description>
+                     <dependencies>
+                        <dependency>
+                           <name>Last Salt highstate &gt;24h on {HOST.NAME}</name>
+                           <expression>{Template App Salt-Minion:vfs.file.time[{$SALT_CACHE_PATH}highstate.cache.p,modify].now()} - {Template App Salt-Minion:vfs.file.time[{$SALT_CACHE_PATH}highstate.cache.p,modify].last()} &gt; 24h</expression>
+                        </dependency>
+                        <dependency>
+                           <name>Salt-minion not running on {HOST.NAME}</name>
+                           <expression>{Template App Salt-Minion:proc.num[salt-minion].max(#3)}=0</expression>
+                        </dependency>
+                     </dependencies>
+                     <tags>
+                        <tag>
+                           <tag>salt-provisioning</tag>
+                        </tag>
+                     </tags>
+                  </trigger>
+               </triggers>
+            </item>
+            <item>
+               <name>Last highstate executed</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>vfs.file.time[{$SALT_CACHE_PATH}highstate.cache.p,modify]</key>
+               <delay>5m</delay>
+               <history>1w</history>
+               <trends>30d</trends>
+               <units>unixtime</units>
+               <applications>
+                  <application>
+                     <name>Saltstack</name>
+                  </application>
+               </applications>
+               <request_method>POST</request_method>
+               <triggers>
+                  <trigger>
+                     <expression>{now()} - {last()} &gt; 24h</expression>
+                     <name>Last Salt highstate &gt;24h on {HOST.NAME}</name>
+		     <url/>
+                     <priority>AVERAGE</priority>
+                     <description>Provisioning of {HOST.NAME} hasn't been executed for over 24 hours. This could indicate a problem with the minion or server.</description>
+                     <dependencies>
+                        <dependency>
+                           <name>Salt-minion not running on {HOST.NAME}</name>
+                           <expression>{Template App Salt-Minion:proc.num[salt-minion].max(#3)}=0</expression>
+                        </dependency>
+                     </dependencies>
+                     <tags>
+                        <tag>
+                           <tag>salt-provisioning</tag>
+                        </tag>
+                     </tags>
+                  </trigger>
+               </triggers>
+            </item>
+         </items>
+         <macros>
+            <macro>
+               <macro>{$SALT_CACHE_PATH}</macro>
+               <value>/var/cache/salt/minion/</value>
+            </macro>
+         </macros>
+         <screens>
+            <screen>
+               <name>Saltstack</name>
+               <hsize>2</hsize>
+               <vsize>2</vsize>
+               <screen_items>
+                  <screen_item>
+                     <resourcetype>1</resourcetype>
+                     <style>0</style>
+                     <resource>
+                        <key>vfs.file.time[{$SALT_CACHE_PATH}highstate.cache.p,modify]</key>
+                        <host>Template App Salt-Minion</host>
+                     </resource>
+                     <width>500</width>
+                     <height>100</height>
+                     <x>0</x>
+                     <y>0</y>
+                     <colspan>1</colspan>
+                     <rowspan>1</rowspan>
+                     <elements>0</elements>
+                     <valign>0</valign>
+                     <halign>0</halign>
+                     <dynamic>0</dynamic>
+                     <sort_triggers>0</sort_triggers>
+                     <url/>
+                     <application/>
+                     <max_columns>3</max_columns>
+                  </screen_item>
+                  <screen_item>
+                     <resourcetype>1</resourcetype>
+                     <style>0</style>
+                     <resource>
+                        <key>proc.num[salt-minion]</key>
+                        <host>Template App Salt-Minion</host>
+                     </resource>
+                     <width>500</width>
+                     <height>100</height>
+                     <x>1</x>
+                     <y>0</y>
+                     <colspan>1</colspan>
+                     <rowspan>1</rowspan>
+                     <elements>0</elements>
+                     <valign>0</valign>
+                     <halign>0</halign>
+                     <dynamic>0</dynamic>
+                     <sort_triggers>0</sort_triggers>
+                     <url/>
+                     <application/>
+                     <max_columns>3</max_columns>
+                  </screen_item>
+                  <screen_item>
+                     <resourcetype>1</resourcetype>
+                     <style>0</style>
+                     <resource>
+                        <key>salt[changed_states]</key>
+                        <host>Template App Salt-Minion</host>
+                     </resource>
+                     <width>500</width>
+                     <height>100</height>
+                     <x>0</x>
+                     <y>1</y>
+                     <colspan>1</colspan>
+                     <rowspan>1</rowspan>
+                     <elements>0</elements>
+                     <valign>0</valign>
+                     <halign>0</halign>
+                     <dynamic>0</dynamic>
+                     <sort_triggers>0</sort_triggers>
+                     <url/>
+                     <application/>
+                     <max_columns>3</max_columns>
+                  </screen_item>
+                  <screen_item>
+                     <resourcetype>1</resourcetype>
+                     <style>0</style>
+                     <resource>
+                        <key>salt[failed_states]</key>
+                        <host>Template App Salt-Minion</host>
+                     </resource>
+                     <width>500</width>
+                     <height>100</height>
+                     <x>1</x>
+                     <y>1</y>
+                     <colspan>1</colspan>
+                     <rowspan>1</rowspan>
+                     <elements>0</elements>
+                     <valign>0</valign>
+                     <halign>0</halign>
+                     <dynamic>0</dynamic>
+                     <sort_triggers>0</sort_triggers>
+                     <url/>
+                     <application/>
+                     <max_columns>3</max_columns>
+                  </screen_item>
+               </screen_items>
+            </screen>
+         </screens>
+      </template>
+   </templates>
+</zabbix_export>

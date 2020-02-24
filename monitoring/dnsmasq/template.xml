@@ -1,0 +1,318 @@
+<?xml version="1.0" ?>
+<zabbix_export>
+   <version>4.4</version>
+   <date>2020-01-28T11:58:26Z</date>
+   <groups>
+      <group>
+         <name>Templates</name>
+      </group>
+   </groups>
+   <templates>
+      <template>
+         <template>Template App Dnsmasq</template>
+         <name>Template App Dnsmasq</name>
+         <groups>
+            <group>
+               <name>Templates</name>
+            </group>
+         </groups>
+         <applications>
+            <application>
+               <name>DNS</name>
+            </application>
+         </applications>
+         <items>
+            <item>
+               <name>Number of authorative queries handled</name>
+               <type>TRAP</type>
+               <key>dnsmasq.queries_auth_zone</key>
+               <delay>0</delay>
+               <history>30d</history>
+               <trends>60d</trends>
+               <units>qps</units>
+               <applications>
+                  <application>
+                     <name>DNS</name>
+                  </application>
+               </applications>
+               <preprocessing>
+                  <step>
+                     <type>CHANGE_PER_SECOND</type>
+                     <params/>
+                  </step>
+               </preprocessing>
+               <request_method>POST</request_method>
+            </item>
+            <item>
+               <name>Number of queries forwarded</name>
+               <type>TRAP</type>
+               <key>dnsmasq.queries_forwarded</key>
+               <delay>0</delay>
+               <history>30d</history>
+               <trends>60d</trends>
+               <units>qps</units>
+               <applications>
+                  <application>
+                     <name>DNS</name>
+                  </application>
+               </applications>
+               <preprocessing>
+                  <step>
+                     <type>CHANGE_PER_SECOND</type>
+                     <params/>
+                  </step>
+               </preprocessing>
+               <request_method>POST</request_method>
+            </item>
+            <item>
+               <name>Number of local queries handled</name>
+               <type>TRAP</type>
+               <key>dnsmasq.queries_locally</key>
+               <delay>0</delay>
+               <history>30d</history>
+               <trends>60d</trends>
+               <units>qps</units>
+               <applications>
+                  <application>
+                     <name>DNS</name>
+                  </application>
+               </applications>
+               <preprocessing>
+                  <step>
+                     <type>CHANGE_PER_SECOND</type>
+                     <params/>
+                  </step>
+               </preprocessing>
+               <request_method>POST</request_method>
+            </item>
+            <item>
+               <name>Occurrences of maximum number of concurrent queries</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>log.count[&quot;/var/log/syslog&quot;,&quot;maximum number of concurrent dns queries reached&quot;,,,skip]</key>
+               <delay>2m</delay>
+               <description>Checks if this DNS server has reached maximum number of concurrent queries.</description>
+               <applications>
+                  <application>
+                     <name>DNS</name>
+                  </application>
+               </applications>
+               <triggers>
+                  <trigger>
+                     <expression>{last(,5m)}&gt;0</expression>
+                     <name>DNS server has reached concurrent capacity</name>
+                     <priority>DISASTER</priority>
+                     <description>Something is flooding this DNS server. Check its logs (enable log-query) and take action.</description>
+                     <tags>
+                        <tag>
+                           <tag>service</tag>
+                           <value>dnsmasq</value>
+                        </tag>
+                     </tags>
+                  </trigger>
+               </triggers>
+            </item>
+            <item>
+               <name>Number of $1 process</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>proc.num[dnsmasq]</key>
+               <delay>5m</delay>
+               <history>30d</history>
+               <trends>60d</trends>
+               <applications>
+                  <application>
+                     <name>DNS</name>
+                  </application>
+               </applications>
+               <request_method>POST</request_method>
+               <triggers>
+                  <trigger>
+                     <expression>{last(0)}=0</expression>
+                     <name>Dnsmasq is not running on {HOSTNAME}</name>
+                     <priority>DISASTER</priority>
+                     <description>DNSmasq is not running.
+      
+      It has been stopped / shutdown or has crashed. 
+      Check on the server for more details:
+        - w / last
+        - dmesg logs
+        - /var/log/messages
+        - dnsmasq logs</description>
+                     <tags>
+                        <tag>
+                           <tag>service</tag>
+                           <value>dnsmasq</value>
+                        </tag>
+                     </tags>
+                  </trigger>
+               </triggers>
+            </item>
+         </items>
+         <discovery_rules>
+            <discovery_rule>
+               <name>DNS Resolvers</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>dnsmasq.discovery</key>
+               <delay>10m</delay>
+               <lifetime>1w</lifetime>
+               <description>Discovery of DNS resolvers used by DNSmasq and related statistics</description>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>Queries failed to server - {#SERVERNAME}</name>
+                     <type>TRAP</type>
+                     <key>dnsmasq.queries_failed[{#SERVERNAME}]</key>
+                     <delay>0</delay>
+                     <history>30d</history>
+                     <trends>60d</trends>
+                     <units>qps</units>
+                     <applications>
+                        <application>
+                           <name>DNS</name>
+                        </application>
+                     </applications>
+                     <preprocessing>
+                        <step>
+                           <type>CHANGE_PER_SECOND</type>
+                           <params/>
+                        </step>
+                     </preprocessing>
+                     <request_method>POST</request_method>
+                  </item_prototype>
+                  <item_prototype>
+                     <name>Queries sent to server - {#SERVERNAME}</name>
+                     <type>TRAP</type>
+                     <key>dnsmasq.queries_sent[{#SERVERNAME}]</key>
+                     <delay>0</delay>
+                     <history>30d</history>
+                     <trends>60d</trends>
+                     <units>qps</units>
+                     <applications>
+                        <application>
+                           <name>DNS</name>
+                        </application>
+                     </applications>
+                     <preprocessing>
+                        <step>
+                           <type>CHANGE_PER_SECOND</type>
+                           <params/>
+                        </step>
+                     </preprocessing>
+                     <request_method>POST</request_method>
+                  </item_prototype>
+               </item_prototypes>
+               <graph_prototypes>
+                  <graph_prototype>
+                     <name>Upstream queries to {#SERVERNAME}</name>
+                     <graph_items>
+                        <graph_item>
+                           <color>C80000</color>
+                           <item>
+                              <host>Template App Dnsmasq</host>
+                              <key>dnsmasq.queries_failed[{#SERVERNAME}]</key>
+                           </item>
+                        </graph_item>
+                        <graph_item>
+                           <sortorder>1</sortorder>
+                           <drawtype>BOLD_LINE</drawtype>
+                           <color>00C800</color>
+                           <item>
+                              <host>Template App Dnsmasq</host>
+                              <key>dnsmasq.queries_sent[{#SERVERNAME}]</key>
+                           </item>
+                        </graph_item>
+                     </graph_items>
+                  </graph_prototype>
+               </graph_prototypes>
+               <request_method>POST</request_method>
+            </discovery_rule>
+         </discovery_rules>
+         <screens>
+            <screen>
+               <name>DNSMasq</name>
+               <hsize>2</hsize>
+               <vsize>2</vsize>
+               <screen_items>
+                  <screen_item>
+                     <resourcetype>0</resourcetype>
+                     <style>0</style>
+                     <resource>
+                        <name>Query count</name>
+                        <host>Template App Dnsmasq</host>
+                     </resource>
+                     <width>500</width>
+                     <height>100</height>
+                     <x>0</x>
+                     <y>0</y>
+                     <colspan>1</colspan>
+                     <rowspan>1</rowspan>
+                     <elements>0</elements>
+                     <valign>0</valign>
+                     <halign>0</halign>
+                     <dynamic>0</dynamic>
+                     <sort_triggers>0</sort_triggers>
+                     <url/>
+                     <application/>
+                     <max_columns>3</max_columns>
+                  </screen_item>
+                  <screen_item>
+                     <resourcetype>20</resourcetype>
+                     <style>0</style>
+                     <resource>
+                        <name>Upstream queries to {#SERVERNAME}</name>
+                        <host>Template App Dnsmasq</host>
+                     </resource>
+                     <width>500</width>
+                     <height>100</height>
+                     <x>0</x>
+                     <y>1</y>
+                     <colspan>1</colspan>
+                     <rowspan>1</rowspan>
+                     <elements>0</elements>
+                     <valign>0</valign>
+                     <halign>0</halign>
+                     <dynamic>0</dynamic>
+                     <sort_triggers>0</sort_triggers>
+                     <url/>
+                     <application/>
+                     <max_columns>3</max_columns>
+                  </screen_item>
+               </screen_items>
+            </screen>
+         </screens>
+      </template>
+   </templates>
+   <graphs>
+      <graph>
+         <name>Query count</name>
+         <show_triggers>NO</show_triggers>
+         <type>STACKED</type>
+         <graph_items>
+            <graph_item>
+               <drawtype>FILLED_REGION</drawtype>
+               <color>00C800</color>
+               <item>
+                  <host>Template App Dnsmasq</host>
+                  <key>dnsmasq.queries_auth_zone</key>
+               </item>
+            </graph_item>
+            <graph_item>
+               <sortorder>1</sortorder>
+               <drawtype>FILLED_REGION</drawtype>
+               <color>C80000</color>
+               <item>
+                  <host>Template App Dnsmasq</host>
+                  <key>dnsmasq.queries_locally</key>
+               </item>
+            </graph_item>
+            <graph_item>
+               <sortorder>2</sortorder>
+               <drawtype>FILLED_REGION</drawtype>
+               <color>0000C8</color>
+               <item>
+                  <host>Template App Dnsmasq</host>
+                  <key>dnsmasq.queries_forwarded</key>
+               </item>
+            </graph_item>
+         </graph_items>
+      </graph>
+   </graphs>
+</zabbix_export>

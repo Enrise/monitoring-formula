@@ -1,0 +1,231 @@
+<?xml version="1.0" ?>
+<zabbix_export>
+   <version>4.4</version>
+   <date>2020-01-28T11:58:13Z</date>
+   <groups>
+      <group>
+         <name>Templates</name>
+      </group>
+   </groups>
+   <templates>
+      <template>
+         <template>Template App OpenVPN</template>
+         <name>Template App OpenVPN</name>
+         <groups>
+            <group>
+               <name>Templates</name>
+            </group>
+         </groups>
+         <applications>
+            <application>
+               <name>Master Items</name>
+            </application>
+            <application>
+               <name>OpenVPN</name>
+            </application>
+            <application>
+               <name>VPN</name>
+            </application>
+            <application>
+               <name>VPN Portal</name>
+            </application>
+         </applications>
+         <items>
+            <item>
+               <name>Listening port 80</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>net.tcp.listen[80]</key>
+               <delay>2m</delay>
+               <history>7d</history>
+               <trends>30d</trends>
+               <applications>
+                  <application>
+                     <name>VPN Portal</name>
+                  </application>
+               </applications>
+               <request_method>POST</request_method>
+               <triggers>
+                  <trigger>
+                     <expression>{last(0)}=0</expression>
+                     <name>Webserver not listening on port 80</name>
+                     <priority>HIGH</priority>
+                     <tags>
+                        <tag>
+                           <tag>service</tag>
+                           <value>openvpn</value>
+                        </tag>
+                     </tags>
+                  </trigger>
+               </triggers>
+            </item>
+            <item>
+               <name>Listening port 443</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>net.tcp.listen[443]</key>
+               <delay>2m</delay>
+               <history>7d</history>
+               <trends>30d</trends>
+               <applications>
+                  <application>
+                     <name>VPN</name>
+                  </application>
+               </applications>
+               <request_method>POST</request_method>
+               <triggers>
+                  <trigger>
+                     <expression>{last(0)}=0</expression>
+                     <name>Webserver not listening on port 443</name>
+                     <priority>HIGH</priority>
+                     <tags>
+                        <tag>
+                           <tag>service</tag>
+                           <value>openvpn</value>
+                        </tag>
+                     </tags>
+                  </trigger>
+               </triggers>
+            </item>
+            <item>
+               <name>Webserver not listening on port 10443</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>net.tcp.listen[10443]</key>
+               <delay>2m</delay>
+               <history>7d</history>
+               <trends>30d</trends>
+               <applications>
+                  <application>
+                     <name>VPN Portal</name>
+                  </application>
+               </applications>
+               <request_method>POST</request_method>
+               <triggers>
+                  <trigger>
+                     <expression>{last(0)}=0</expression>
+                     <name>Webserver not listening on port 10443</name>
+                     <priority>HIGH</priority>
+                     <tags>
+                        <tag>
+                           <tag>service</tag>
+                           <value>openvpn</value>
+                        </tag>
+                     </tags>
+                  </trigger>
+               </triggers>
+            </item>
+            <item>
+               <name>OpenVPN: Number of bytes incoming</name>
+               <type>DEPENDENT</type>
+               <key>openvpn[bytesin]</key>
+               <delay>0</delay>
+               <history>7d</history>
+               <trends>30d</trends>
+               <units>bytes</units>
+               <applications>
+                  <application>
+                     <name>OpenVPN</name>
+                  </application>
+               </applications>
+               <preprocessing>
+                  <step>
+                     <type>JSONPATH</type>
+                     <params>$.rx</params>
+                  </step>
+               </preprocessing>
+               <master_item>
+                  <key>openvpn[server_stats]</key>
+               </master_item>
+               <request_method>POST</request_method>
+            </item>
+            <item>
+               <name>OpenVPN: Number of bytes outgoing</name>
+               <type>DEPENDENT</type>
+               <key>openvpn[bytesout]</key>
+               <delay>0</delay>
+               <history>7d</history>
+               <trends>30d</trends>
+               <units>bytes</units>
+               <applications>
+                  <application>
+                     <name>OpenVPN</name>
+                  </application>
+               </applications>
+               <preprocessing>
+                  <step>
+                     <type>JSONPATH</type>
+                     <params>$.tx</params>
+                  </step>
+               </preprocessing>
+               <master_item>
+                  <key>openvpn[server_stats]</key>
+               </master_item>
+               <request_method>POST</request_method>
+            </item>
+            <item>
+               <name>OpenVPN: Number of clients</name>
+               <type>DEPENDENT</type>
+               <key>openvpn[nclients]</key>
+               <delay>0</delay>
+               <history>7d</history>
+               <trends>30d</trends>
+               <units>users</units>
+               <applications>
+                  <application>
+                     <name>OpenVPN</name>
+                  </application>
+               </applications>
+               <preprocessing>
+                  <step>
+                     <type>JSONPATH</type>
+                     <params>$.clients</params>
+                  </step>
+               </preprocessing>
+               <master_item>
+                  <key>openvpn[server_stats]</key>
+               </master_item>
+               <request_method>POST</request_method>
+            </item>
+            <item>
+               <name>OpenVPN: Server Stats</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>openvpn[server_stats]</key>
+               <delay>2m</delay>
+               <history>0</history>
+               <trends>0</trends>
+               <value_type>TEXT</value_type>
+               <applications>
+                  <application>
+                     <name>Master Items</name>
+                  </application>
+               </applications>
+            </item>
+            <item>
+               <name>OpenVPN processes</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>proc.num[openvpn]</key>
+               <delay>2m</delay>
+               <history>2w</history>
+               <trends>30d</trends>
+               <applications>
+                  <application>
+                     <name>VPN</name>
+                  </application>
+               </applications>
+               <request_method>POST</request_method>
+               <triggers>
+                  <trigger>
+                     <expression>{last(0)}&lt;1</expression>
+                     <name>Service OpenVPN</name>
+                     <priority>AVERAGE</priority>
+                     <tags>
+                        <tag>
+                           <tag>service</tag>
+                           <value>openvpn</value>
+                        </tag>
+                     </tags>
+                  </trigger>
+               </triggers>
+            </item>
+         </items>
+      </template>
+   </templates>
+</zabbix_export>

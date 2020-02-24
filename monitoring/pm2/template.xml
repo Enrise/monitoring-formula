@@ -1,0 +1,243 @@
+<?xml version="1.0" ?>
+<zabbix_export>
+   <version>4.4</version>
+   <date>2020-01-28T11:58:31Z</date>
+   <groups>
+      <group>
+         <name>Templates</name>
+      </group>
+   </groups>
+   <templates>
+      <template>
+         <template>Template App PM2</template>
+         <name>Template App PM2</name>
+         <groups>
+            <group>
+               <name>Templates</name>
+            </group>
+         </groups>
+         <applications>
+            <application>
+               <name>PM2 Daemon</name>
+            </application>
+            <application>
+               <name>PM2 Processes</name>
+            </application>
+         </applications>
+         <items>
+            <item>
+               <name>PM2 Daemon CPU Usage</name>
+               <type>TRAP</type>
+               <key>pm2.cpu</key>
+               <delay>0</delay>
+               <history>7d</history>
+               <trends>30d</trends>
+               <value_type>FLOAT</value_type>
+               <applications>
+                  <application>
+                     <name>PM2 Daemon</name>
+                  </application>
+               </applications>
+               <request_method>POST</request_method>
+            </item>
+            <item>
+               <name>PM2 Daemon Memory Usage</name>
+               <type>TRAP</type>
+               <key>pm2.memory</key>
+               <delay>0</delay>
+               <history>7d</history>
+               <trends>30d</trends>
+               <units>bytes</units>
+               <applications>
+                  <application>
+                     <name>PM2 Daemon</name>
+                  </application>
+               </applications>
+               <request_method>POST</request_method>
+            </item>
+            <item>
+               <name>PM2 Daemon PID</name>
+               <type>TRAP</type>
+               <key>pm2.pid</key>
+               <delay>0</delay>
+               <history>7d</history>
+               <trends>30d</trends>
+               <applications>
+                  <application>
+                     <name>PM2 Daemon</name>
+                  </application>
+               </applications>
+               <preprocessing>
+                  <step>
+                     <type>MULTIPLIER</type>
+                     <params>1</params>
+                  </step>
+               </preprocessing>
+               <request_method>POST</request_method>
+               <triggers>
+                  <trigger>
+                     <expression>{diff(0)}&gt;0</expression>
+                     <name>PM2 Daemon PID changed</name>
+                     <priority>WARNING</priority>
+                     <description>PM2 Daemon PID changed</description>
+                  </trigger>
+               </triggers>
+            </item>
+            <item>
+               <name>PM2 Daemon Status</name>
+               <type>TRAP</type>
+               <key>pm2.status</key>
+               <delay>0</delay>
+               <history>7d</history>
+               <trends>0</trends>
+               <value_type>TEXT</value_type>
+               <applications>
+                  <application>
+                     <name>PM2 Daemon</name>
+                  </application>
+               </applications>
+               <request_method>POST</request_method>
+               <triggers>
+                  <trigger>
+                     <expression>{str(stopped)}</expression>
+                     <name>PM2 Daemon stopped</name>
+                     <priority>AVERAGE</priority>
+                     <description>PM2 Daemon stopped</description>
+                  </trigger>
+               </triggers>
+            </item>
+         </items>
+         <discovery_rules>
+            <discovery_rule>
+               <name>PM2 Processes</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>pm2.processes</key>
+               <delay>30m</delay>
+               <lifetime>2h</lifetime>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>PM2: $1 CPU Usage</name>
+                     <type>TRAP</type>
+                     <key>pm2.processes[{#PROCESS_ID},cpu]</key>
+                     <delay>0</delay>
+                     <history>30d</history>
+                     <trends>90d</trends>
+                     <value_type>FLOAT</value_type>
+                     <units>%</units>
+                     <applications>
+                        <application>
+                           <name>PM2 Processes</name>
+                        </application>
+                     </applications>
+                     <request_method>POST</request_method>
+                     <trigger_prototypes>
+                        <trigger_prototype>
+                           <expression>{avg(300)}&gt;80</expression>
+                           <name>PM2's {#PROCESS_ID} CPU &gt; 80%</name>
+                           <priority>HIGH</priority>
+                           <description>PM2's {#PROCESS_ID} is using more than 80% of CPU in 5 minutes</description>
+                        </trigger_prototype>
+                     </trigger_prototypes>
+                  </item_prototype>
+                  <item_prototype>
+                     <name>PM2: $1 Memory Usage</name>
+                     <type>TRAP</type>
+                     <key>pm2.processes[{#PROCESS_ID},memory]</key>
+                     <delay>0</delay>
+                     <history>30d</history>
+                     <trends>90d</trends>
+                     <value_type>FLOAT</value_type>
+                     <units>bytes</units>
+                     <applications>
+                        <application>
+                           <name>PM2 Processes</name>
+                        </application>
+                     </applications>
+                     <request_method>POST</request_method>
+                     <trigger_prototypes>
+                        <trigger_prototype>
+                           <expression>{last()}&gt;1400000000</expression>
+                           <name>PM2's {#PROCESS_ID} RAM &gt; 1.4GB</name>
+                           <priority>HIGH</priority>
+                           <description>PM2's {#PROCESS_ID} is using more than 1.4GB of RAM</description>
+                        </trigger_prototype>
+                     </trigger_prototypes>
+                  </item_prototype>
+                  <item_prototype>
+                     <name>PM2: $1 Restarts</name>
+                     <type>TRAP</type>
+                     <key>pm2.processes[{#PROCESS_ID},restarts]</key>
+                     <delay>0</delay>
+                     <history>30d</history>
+                     <trends>90d</trends>
+                     <applications>
+                        <application>
+                           <name>PM2 Processes</name>
+                        </application>
+                     </applications>
+                     <request_method>POST</request_method>
+                     <trigger_prototypes>
+                        <trigger_prototype>
+                           <expression>{change()}&gt;=1</expression>
+                           <name>PM2's {#PROCESS_ID} restarted</name>
+                           <priority>AVERAGE</priority>
+                           <description>PM2's {#PROCESS_ID} restared.</description>
+                        </trigger_prototype>
+                     </trigger_prototypes>
+                  </item_prototype>
+                  <item_prototype>
+                     <name>PM2: $1 Status</name>
+                     <type>TRAP</type>
+                     <key>pm2.processes[{#PROCESS_ID},status]</key>
+                     <delay>0</delay>
+                     <history>14d</history>
+                     <trends>0</trends>
+                     <value_type>TEXT</value_type>
+                     <applications>
+                        <application>
+                           <name>PM2 Processes</name>
+                        </application>
+                     </applications>
+                     <request_method>POST</request_method>
+                     <trigger_prototypes>
+                        <trigger_prototype>
+                           <expression>{str(stopped)}=1</expression>
+                           <name>PM2's {#PROCESS_ID} stopped</name>
+                           <priority>WARNING</priority>
+                           <description>PM2's {#PROCESS_ID} is stopped.</description>
+                        </trigger_prototype>
+                     </trigger_prototypes>
+                  </item_prototype>
+               </item_prototypes>
+               <graph_prototypes>
+                  <graph_prototype>
+                     <name>PM2's {#PROCESS_ID} CPU Usage</name>
+                     <graph_items>
+                        <graph_item>
+                           <color>F63100</color>
+                           <item>
+                              <host>Template App PM2</host>
+                              <key>pm2.processes[{#PROCESS_ID},cpu]</key>
+                           </item>
+                        </graph_item>
+                     </graph_items>
+                  </graph_prototype>
+                  <graph_prototype>
+                     <name>PM2's {#PROCESS_ID} Memory Usage</name>
+                     <graph_items>
+                        <graph_item>
+                           <color>1A7C11</color>
+                           <item>
+                              <host>Template App PM2</host>
+                              <key>pm2.processes[{#PROCESS_ID},memory]</key>
+                           </item>
+                        </graph_item>
+                     </graph_items>
+                  </graph_prototype>
+               </graph_prototypes>
+               <request_method>POST</request_method>
+            </discovery_rule>
+         </discovery_rules>
+      </template>
+   </templates>
+</zabbix_export>

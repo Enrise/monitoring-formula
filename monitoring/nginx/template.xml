@@ -1,0 +1,262 @@
+<?xml version="1.0" ?>
+<zabbix_export>
+   <version>4.4</version>
+   <date>2020-01-28T11:58:26Z</date>
+   <groups>
+      <group>
+         <name>Templates</name>
+      </group>
+   </groups>
+   <templates>
+      <template>
+         <template>Template App Nginx</template>
+         <name>Template App Nginx</name>
+         <groups>
+            <group>
+               <name>Templates</name>
+            </group>
+         </groups>
+         <applications>
+            <application>
+               <name>Nginx</name>
+            </application>
+         </applications>
+         <items>
+            <item>
+               <name>Nginx: accepts per second</name>
+               <type>DEPENDENT</type>
+               <key>nginx.accepts</key>
+               <delay>0</delay>
+               <history>7d</history>
+               <trends>30d</trends>
+               <value_type>FLOAT</value_type>
+               <applications>
+                  <application>
+                     <name>Nginx</name>
+                  </application>
+               </applications>
+               <preprocessing>
+                  <step>
+                     <type>REGEX</type>
+                     <params>server accepts handled requests\s+([0-9]+) ([0-9]+) ([0-9]+)
+\1</params>
+                  </step>
+                  <step>
+                     <type>CHANGE_PER_SECOND</type>
+                     <params/>
+                  </step>
+               </preprocessing>
+               <master_item>
+                  <key>nginx.status</key>
+               </master_item>
+            </item>
+            <item>
+               <name>Nginx active connections</name>
+               <type>DEPENDENT</type>
+               <key>nginx.connections.active</key>
+               <delay>0</delay>
+               <history>7d</history>
+               <trends>30d</trends>
+               <applications>
+                  <application>
+                     <name>Nginx</name>
+                  </application>
+               </applications>
+               <preprocessing>
+                  <step>
+                     <type>REGEX</type>
+                     <params>Active connections:\s+([0-9]+)
+\1</params>
+                  </step>
+               </preprocessing>
+               <master_item>
+                  <key>nginx.status</key>
+               </master_item>
+            </item>
+            <item>
+               <name>Nginx: number of connections in reading state</name>
+               <type>DEPENDENT</type>
+               <key>nginx.connections.reading</key>
+               <delay>0</delay>
+               <history>7d</history>
+               <trends>30d</trends>
+               <value_type>FLOAT</value_type>
+               <applications>
+                  <application>
+                     <name>Nginx</name>
+                  </application>
+               </applications>
+               <preprocessing>
+                  <step>
+                     <type>REGEX</type>
+                     <params>Reading:\s+([0-9]+)
+\1</params>
+                  </step>
+               </preprocessing>
+               <master_item>
+                  <key>nginx.status</key>
+               </master_item>
+            </item>
+            <item>
+               <name>Nginx: number of connections in waiting state</name>
+               <type>DEPENDENT</type>
+               <key>nginx.connections.waiting</key>
+               <delay>0</delay>
+               <history>7d</history>
+               <trends>30d</trends>
+               <value_type>FLOAT</value_type>
+               <applications>
+                  <application>
+                     <name>Nginx</name>
+                  </application>
+               </applications>
+               <preprocessing>
+                  <step>
+                     <type>REGEX</type>
+                     <params>Waiting:\s+([0-9]+)
+\1</params>
+                  </step>
+               </preprocessing>
+               <master_item>
+                  <key>nginx.status</key>
+               </master_item>
+            </item>
+            <item>
+               <name>Nginx: number of connections in writing state</name>
+               <type>DEPENDENT</type>
+               <key>nginx.connections.writing</key>
+               <delay>0</delay>
+               <history>7d</history>
+               <trends>30d</trends>
+               <value_type>FLOAT</value_type>
+               <applications>
+                  <application>
+                     <name>Nginx</name>
+                  </application>
+               </applications>
+               <preprocessing>
+                  <step>
+                     <type>REGEX</type>
+                     <params>Writing:\s+([0-9]+)
+\1</params>
+                  </step>
+               </preprocessing>
+               <master_item>
+                  <key>nginx.status</key>
+               </master_item>
+            </item>
+            <item>
+               <name>Nginx: handled per second</name>
+               <type>DEPENDENT</type>
+               <key>nginx.handled</key>
+               <delay>0</delay>
+               <history>7d</history>
+               <trends>30d</trends>
+               <applications>
+                  <application>
+                     <name>Nginx</name>
+                  </application>
+               </applications>
+               <preprocessing>
+                  <step>
+                     <type>REGEX</type>
+                     <params>server accepts handled requests\s+([0-9]+) ([0-9]+) ([0-9]+)
+\2</params>
+                  </step>
+                  <step>
+                     <type>CHANGE_PER_SECOND</type>
+                     <params/>
+                  </step>
+               </preprocessing>
+               <master_item>
+                  <key>nginx.status</key>
+               </master_item>
+            </item>
+            <item>
+               <name>Nginx: requests per second</name>
+               <type>DEPENDENT</type>
+               <key>nginx.requests</key>
+               <delay>0</delay>
+               <history>7d</history>
+               <trends>30d</trends>
+               <value_type>FLOAT</value_type>
+               <applications>
+                  <application>
+                     <name>Nginx</name>
+                  </application>
+               </applications>
+               <preprocessing>
+                  <step>
+                     <type>REGEX</type>
+                     <params>server accepts handled requests\s+([0-9]+) ([0-9]+) ([0-9]+)
+\3</params>
+                  </step>
+                  <step>
+                     <type>CHANGE_PER_SECOND</type>
+                     <params/>
+                  </step>
+               </preprocessing>
+               <master_item>
+                  <key>nginx.status</key>
+               </master_item>
+            </item>
+            <item>
+               <name>NGINX status page</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>nginx.status</key>
+               <delay>5m</delay>
+               <history>0</history>
+               <trends>0</trends>
+               <value_type>TEXT</value_type>
+               <applications>
+                  <application>
+                     <name>Nginx</name>
+                  </application>
+               </applications>
+            </item>
+            <item>
+               <name>Number of $1 process</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>proc.num[nginx]</key>
+               <delay>5m</delay>
+               <history>7d</history>
+               <trends>30d</trends>
+               <applications>
+                  <application>
+                     <name>Nginx</name>
+                  </application>
+               </applications>
+               <request_method>POST</request_method>
+               <triggers>
+                  <trigger>
+                     <expression>{last(0)}=0</expression>
+                     <name>Nginx is not running on {HOSTNAME}</name>
+                     <priority>HIGH</priority>
+                     <description>Nginx is not running.
+      
+      It has been stopped / shutdown or has crashed. 
+      Check on the server for more details:
+        - w / last
+        - dmesg logs
+        - /var/log/messages
+        - nginx error logs</description>
+                     <tags>
+                        <tag>
+                           <tag>service</tag>
+                           <value>nginx</value>
+                        </tag>
+                     </tags>
+                  </trigger>
+               </triggers>
+            </item>
+         </items>
+         <screens>
+            <screen>
+               <name>Nginx</name>
+               <hsize>2</hsize>
+               <vsize>2</vsize>
+            </screen>
+         </screens>
+      </template>
+   </templates>
+</zabbix_export>

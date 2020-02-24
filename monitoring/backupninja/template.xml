@@ -1,0 +1,128 @@
+<?xml version="1.0" ?>
+<zabbix_export>
+   <version>4.4</version>
+   <date>2020-01-28T11:58:28Z</date>
+   <groups>
+      <group>
+         <name>Templates</name>
+      </group>
+   </groups>
+   <templates>
+      <template>
+         <template>Template App Backupninja Client</template>
+         <name>Template App Backupninja Client</name>
+         <groups>
+            <group>
+               <name>Templates</name>
+            </group>
+         </groups>
+         <applications>
+            <application>
+               <name>Backups</name>
+            </application>
+         </applications>
+         <items>
+            <item>
+               <name>Fatal errors in Backupninja log</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>log.count[/var/log/backupninja.log,'Fatal']</key>
+               <delay>30m</delay>
+               <history>2w</history>
+               <trends>1w</trends>
+               <applications>
+                  <application>
+                     <name>Backups</name>
+                  </application>
+               </applications>
+               <request_method>POST</request_method>
+               <triggers>
+                  <trigger>
+                     <expression>{last()} &gt; 0</expression>
+                     <name>Fatal errors in Backupninja logs on {HOSTNAME}</name>
+                     <priority>HIGH</priority>
+                     <description>The logfile of Backupninja has one or more fatal errors in the past 24 hours.</description>
+                  </trigger>
+               </triggers>
+            </item>
+         </items>
+         <discovery_rules>
+            <discovery_rule>
+               <name>Discover Backupjobs</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>backupninja.discovery</key>
+               <delay>1h</delay>
+               <lifetime>0</lifetime>
+               <description>Discovers all configured backup tasks on the current machine</description>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>Backup task {#BACKUPTASK} status</name>
+                     <type>ZABBIX_ACTIVE</type>
+                     <key>backupninja.jobstatus[{#BACKUPTASK}]</key>
+                     <delay>1h</delay>
+                     <history>2w</history>
+                     <trends>1w</trends>
+                     <description>Status of backuptask /etc/backup.d/{#BACKUPTASK} on {HOSTNAME}</description>
+                     <applications>
+                        <application>
+                           <name>Backups</name>
+                        </application>
+                     </applications>
+                     <valuemap>
+                        <name>Backupninja - Backup status</name>
+                     </valuemap>
+                     <request_method>POST</request_method>
+                     <trigger_prototypes>
+                        <trigger_prototype>
+                           <expression>{last()}&lt;&gt;1</expression>
+                           <name>Backup {#BACKUPTASK} on {HOSTNAME} hasn't completed succesfully</name>
+                           <priority>HIGH</priority>
+                           <description>There is a warning (or error) in the log for {#BACKUPTASK} on {HOSTNAME}. This may indicate a problem creating the backup, please check /var/log/backupninja.log for further information.</description>
+                           <tags>
+                              <tag>
+                                 <tag>backup-task</tag>
+                                 <value>{#BACKUPTASK}</value>
+                              </tag>
+                              <tag>
+                                 <tag>service</tag>
+                                 <value>backups</value>
+                              </tag>
+                           </tags>
+                        </trigger_prototype>
+                     </trigger_prototypes>
+                  </item_prototype>
+               </item_prototypes>
+               <graph_prototypes>
+                  <graph_prototype>
+                     <name>Backup status {#BACKUPTASK}</name>
+                     <graph_items>
+                        <graph_item>
+                           <color>0000AA</color>
+                           <item>
+                              <host>Template App Backupninja Client</host>
+                              <key>backupninja.jobstatus[{#BACKUPTASK}]</key>
+                           </item>
+                        </graph_item>
+                     </graph_items>
+                  </graph_prototype>
+               </graph_prototypes>
+               <request_method>POST</request_method>
+            </discovery_rule>
+         </discovery_rules>
+      </template>
+   </templates>
+   <value_maps>
+      <value_map>
+         <name>Backupninja - Backup status</name>
+         <mappings>
+            <mapping>
+               <value>0</value>
+               <newvalue>Warning</newvalue>
+            </mapping>
+            <mapping>
+               <value>1</value>
+               <newvalue>Success</newvalue>
+            </mapping>
+         </mappings>
+      </value_map>
+   </value_maps>
+</zabbix_export>

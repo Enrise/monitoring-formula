@@ -1,0 +1,267 @@
+<?xml version="1.0" ?>
+<zabbix_export>
+   <version>4.4</version>
+   <date>2020-01-28T11:58:31Z</date>
+   <groups>
+      <group>
+         <name>Templates</name>
+      </group>
+   </groups>
+   <templates>
+      <template>
+         <template>Template App StrongSwan</template>
+         <name>Template App StrongSwan</name>
+         <description>StrongSwan IPsec VPN</description>
+         <groups>
+            <group>
+               <name>Templates</name>
+            </group>
+         </groups>
+         <applications>
+            <application>
+               <name>Master Items</name>
+            </application>
+            <application>
+               <name>strongSwan</name>
+            </application>
+         </applications>
+         <items>
+            <item>
+               <name>Number of $1 processes</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>proc.num[charon]</key>
+               <delay>2m</delay>
+               <history>30d</history>
+               <applications>
+                  <application>
+                     <name>strongSwan</name>
+                  </application>
+               </applications>
+               <triggers>
+                  <trigger>
+                     <expression>{last()}=0</expression>
+                     <name>Charon is not running on {HOST.NAME}</name>
+                     <priority>HIGH</priority>
+                     <description>This means the VPN tunnels are DOWN.</description>
+                  </trigger>
+               </triggers>
+            </item>
+            <item>
+               <name>strongSwan - conn_connecting</name>
+               <type>DEPENDENT</type>
+               <key>strongswan.status[conn_connecting]</key>
+               <delay>0</delay>
+               <history>7d</history>
+               <trends>30d</trends>
+               <applications>
+                  <application>
+                     <name>strongSwan</name>
+                  </application>
+               </applications>
+               <preprocessing>
+                  <step>
+                     <type>JSONPATH</type>
+                     <params>$.conn_connecting</params>
+                  </step>
+               </preprocessing>
+               <master_item>
+                  <key>strongswan.status[global_status]</key>
+               </master_item>
+               <request_method>POST</request_method>
+            </item>
+            <item>
+               <name>strongSwan - conn_up</name>
+               <type>DEPENDENT</type>
+               <key>strongswan.status[conn_up]</key>
+               <delay>0</delay>
+               <history>7d</history>
+               <trends>30d</trends>
+               <applications>
+                  <application>
+                     <name>strongSwan</name>
+                  </application>
+               </applications>
+               <preprocessing>
+                  <step>
+                     <type>JSONPATH</type>
+                     <params>$.conn_up</params>
+                  </step>
+               </preprocessing>
+               <master_item>
+                  <key>strongswan.status[global_status]</key>
+               </master_item>
+               <request_method>POST</request_method>
+            </item>
+            <item>
+               <name>Strongswan - Global Status</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>strongswan.status[global_status]</key>
+               <delay>5m</delay>
+               <history>0</history>
+               <trends>0</trends>
+               <value_type>CHAR</value_type>
+               <applications>
+                  <application>
+                     <name>Master Items</name>
+                  </application>
+               </applications>
+            </item>
+            <item>
+               <name>strongSwan - phase2 count</name>
+               <type>DEPENDENT</type>
+               <key>strongswan.status[phase2_count]</key>
+               <delay>0</delay>
+               <history>7d</history>
+               <trends>30d</trends>
+               <applications>
+                  <application>
+                     <name>strongSwan</name>
+                  </application>
+               </applications>
+               <preprocessing>
+                  <step>
+                     <type>JSONPATH</type>
+                     <params>$.phase2_count</params>
+                  </step>
+               </preprocessing>
+               <master_item>
+                  <key>strongswan.status[global_status]</key>
+               </master_item>
+               <request_method>POST</request_method>
+            </item>
+         </items>
+         <discovery_rules>
+            <discovery_rule>
+               <name>VPN Tunnels</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>strongswan.discovery</key>
+               <delay>1h</delay>
+               <lifetime>0</lifetime>
+               <description>VPN's</description>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>VPN Status Master - {#CONNECTION}</name>
+                     <type>ZABBIX_ACTIVE</type>
+                     <key>strongswan.status[conn_status,{#CONNECTION}]</key>
+                     <delay>2m</delay>
+                     <history>0</history>
+                     <trends>0</trends>
+                     <value_type>CHAR</value_type>
+                     <applications>
+                        <application>
+                           <name>Master Items</name>
+                        </application>
+                     </applications>
+                  </item_prototype>
+                  <item_prototype>
+                     <name>VPN Status - {#CONNECTION}</name>
+                     <type>DEPENDENT</type>
+                     <key>strongswan.status[status,{#CONNECTION}]</key>
+                     <delay>0</delay>
+                     <history>7d</history>
+                     <applications>
+                        <application>
+                           <name>strongSwan</name>
+                        </application>
+                     </applications>
+                     <valuemap>
+                        <name>StrongSwan Connection Status</name>
+                     </valuemap>
+                     <preprocessing>
+                        <step>
+                           <type>JSONPATH</type>
+                           <params>$.status</params>
+                        </step>
+                     </preprocessing>
+                     <master_item>
+                        <key>strongswan.status[conn_status,{#CONNECTION}]</key>
+                     </master_item>
+                     <request_method>POST</request_method>
+                     <trigger_prototypes>
+                        <trigger_prototype>
+                           <expression>{last()}&lt;&gt;1</expression>
+                           <name>VPN tunnel {#CONNECTION} is down</name>
+                           <priority>HIGH</priority>
+                           <dependencies>
+                              <dependency>
+                                 <name>Charon is not running on {HOST.NAME}</name>
+                                 <expression>{Template App StrongSwan:proc.num[charon].last()}=0</expression>
+                              </dependency>
+                           </dependencies>
+                        </trigger_prototype>
+                     </trigger_prototypes>
+                  </item_prototype>
+                  <item_prototype>
+                     <name>VPN Uptime - {#CONNECTION}</name>
+                     <type>DEPENDENT</type>
+                     <key>strongswan.status[uptime,{#CONNECTION}]</key>
+                     <delay>0</delay>
+                     <history>7d</history>
+                     <trends>0</trends>
+                     <units>Minutes</units>
+                     <applications>
+                        <application>
+                           <name>strongSwan</name>
+                        </application>
+                     </applications>
+                     <preprocessing>
+                        <step>
+                           <type>JSONPATH</type>
+                           <params>$.uptime</params>
+                        </step>
+                     </preprocessing>
+                     <master_item>
+                        <key>strongswan.status[conn_status,{#CONNECTION}]</key>
+                     </master_item>
+                     <request_method>POST</request_method>
+                  </item_prototype>
+               </item_prototypes>
+               <request_method>POST</request_method>
+            </discovery_rule>
+         </discovery_rules>
+      </template>
+   </templates>
+   <value_maps>
+      <value_map>
+         <name>StrongSwan Connection Status</name>
+         <mappings>
+            <mapping>
+               <value>0</value>
+               <newvalue>Unknown (down)</newvalue>
+            </mapping>
+            <mapping>
+               <value>1</value>
+               <newvalue>Established (up)</newvalue>
+            </mapping>
+            <mapping>
+               <value>2</value>
+               <newvalue>Connecting</newvalue>
+            </mapping>
+            <mapping>
+               <value>3</value>
+               <newvalue>Created</newvalue>
+            </mapping>
+            <mapping>
+               <value>4</value>
+               <newvalue>Passive</newvalue>
+            </mapping>
+            <mapping>
+               <value>5</value>
+               <newvalue>Rekeying</newvalue>
+            </mapping>
+            <mapping>
+               <value>6</value>
+               <newvalue>Rekeyed</newvalue>
+            </mapping>
+            <mapping>
+               <value>7</value>
+               <newvalue>Deleting</newvalue>
+            </mapping>
+            <mapping>
+               <value>8</value>
+               <newvalue>Destroying</newvalue>
+            </mapping>
+         </mappings>
+      </value_map>
+   </value_maps>
+</zabbix_export>

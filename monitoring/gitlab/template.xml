@@ -1,0 +1,172 @@
+<?xml version="1.0" ?>
+<zabbix_export>
+   <version>4.4</version>
+   <date>2020-01-28T11:58:34Z</date>
+   <groups>
+      <group>
+         <name>Templates</name>
+      </group>
+   </groups>
+   <templates>
+      <template>
+         <template>Template App Gitlab</template>
+         <name>Template App Gitlab</name>
+         <description>Gitlab monitoring</description>
+         <groups>
+            <group>
+               <name>Templates</name>
+            </group>
+         </groups>
+         <applications>
+            <application>
+               <name>Gitlab</name>
+            </application>
+         </applications>
+         <items>
+            <item>
+               <name>Gitlab Liveness Check</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>gitlab.liveness</key>
+               <delay>2m</delay>
+               <history>0</history>
+               <trends>0</trends>
+               <value_type>TEXT</value_type>
+               <applications>
+                  <application>
+                     <name>Gitlab</name>
+                  </application>
+               </applications>
+            </item>
+            <item>
+               <name>Gitlab Readiness Check</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>gitlab.readiness</key>
+               <delay>2m</delay>
+               <history>0</history>
+               <trends>0</trends>
+               <value_type>TEXT</value_type>
+               <applications>
+                  <application>
+                     <name>Gitlab</name>
+                  </application>
+               </applications>
+            </item>
+         </items>
+         <discovery_rules>
+            <discovery_rule>
+               <name>Discover Gitlab Health Checks</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>gitlab.discovery</key>
+               <delay>1h</delay>
+               <lifetime>0</lifetime>
+               <description>Discovers all Gitlab Healthchecks on the current machine</description>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>Gitlab liveness {#CHECK}</name>
+                     <type>DEPENDENT</type>
+                     <key>gitlab.liveness[{#CHECK}]</key>
+                     <delay>0</delay>
+                     <history>30d</history>
+                     <description>V2 - Status of Gitlab check {#CHECK} on {HOSTNAME}</description>
+                     <applications>
+                        <application>
+                           <name>Gitlab</name>
+                        </application>
+                     </applications>
+                     <valuemap>
+                        <name>Not Ok / OK check</name>
+                     </valuemap>
+                     <preprocessing>
+                        <step>
+                           <type>JSONPATH</type>
+                           <params>$['{#CHECK}']['status']</params>
+                        </step>
+                     </preprocessing>
+                     <master_item>
+                        <key>gitlab.liveness</key>
+                     </master_item>
+                     <request_method>POST</request_method>
+                     <trigger_prototypes>
+                        <trigger_prototype>
+                           <expression>{last()}&lt;&gt;1</expression>
+                           <name>Gitlab Lifeness {#CHECK} on {HOSTNAME} is failing</name>
+                           <priority>HIGH</priority>
+                           <description>The Gitlab Lifeness check has returned a non-OK value for {#CHECK} on {HOSTNAME}</description>
+                           <tags>
+                              <tag>
+                                 <tag>gitlab-check</tag>
+                                 <value>lifeness</value>
+                              </tag>
+                              <tag>
+                                 <tag>service</tag>
+                                 <value>gitlab-ce</value>
+                              </tag>
+                           </tags>
+                        </trigger_prototype>
+                     </trigger_prototypes>
+                  </item_prototype>
+                  <item_prototype>
+                     <name>Gitlab readiness {#CHECK}</name>
+                     <type>DEPENDENT</type>
+                     <key>gitlab.readiness[{#CHECK}]</key>
+                     <delay>0</delay>
+                     <history>30d</history>
+                     <description>V2 - Status of Gitlab check {#CHECK} on {HOSTNAME}</description>
+                     <applications>
+                        <application>
+                           <name>Gitlab</name>
+                        </application>
+                     </applications>
+                     <valuemap>
+                        <name>Not Ok / OK check</name>
+                     </valuemap>
+                     <preprocessing>
+                        <step>
+                           <type>JSONPATH</type>
+                           <params>$['{#CHECK}']['status']</params>
+                        </step>
+                     </preprocessing>
+                     <master_item>
+                        <key>gitlab.readiness</key>
+                     </master_item>
+                     <trigger_prototypes>
+                        <trigger_prototype>
+                           <expression>{last()}&lt;&gt;1</expression>
+                           <name>Gitlab Readiness {#CHECK} on {HOSTNAME} is failing</name>
+                           <priority>HIGH</priority>
+                           <description>The Gitlab Readiness check has returned a non-OK value for {#CHECK} on {HOSTNAME}</description>
+                           <tags>
+                              <tag>
+                                 <tag>gitlab-check</tag>
+                                 <value>readiness</value>
+                              </tag>
+                              <tag>
+                                 <tag>service</tag>
+                                 <value>gitlab-ce</value>
+                              </tag>
+                           </tags>
+                        </trigger_prototype>
+                     </trigger_prototypes>
+                  </item_prototype>
+               </item_prototypes>
+               <request_method>POST</request_method>
+            </discovery_rule>
+         </discovery_rules>
+      </template>
+   </templates>
+   <value_maps>
+      <value_map>
+         <name>Not Ok / OK check</name>
+         <mappings>
+            <mapping>
+               <value>0</value>
+               <newvalue>Not OK</newvalue>
+            </mapping>
+            <mapping>
+               <value>1</value>
+               <newvalue>OK</newvalue>
+            </mapping>
+         </mappings>
+      </value_map>
+   </value_maps>
+</zabbix_export>

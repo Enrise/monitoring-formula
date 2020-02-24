@@ -1,0 +1,83 @@
+<?xml version="1.0" ?>
+<zabbix_export>
+   <version>4.4</version>
+   <date>2020-01-28T11:58:30Z</date>
+   <groups>
+      <group>
+         <name>Templates</name>
+      </group>
+   </groups>
+   <templates>
+      <template>
+         <template>Template Cronjobs Auto</template>
+         <name>Template Cronjobs Auto</name>
+         <description>Auto-detect (wrapped) cronjobs and monitors them</description>
+         <groups>
+            <group>
+               <name>Templates</name>
+            </group>
+         </groups>
+         <applications>
+            <application>
+               <name>Cronjobs</name>
+            </application>
+         </applications>
+         <discovery_rules>
+            <discovery_rule>
+               <name>Discover Cronjobs</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>cronjob.discovery</key>
+               <delay>1h</delay>
+               <lifetime>0</lifetime>
+               <description>Discovers all cronjobs using cron-wrapper on the current machine</description>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>Cronjob task {#CRONJOB} exitcode</name>
+                     <type>ZABBIX_ACTIVE</type>
+                     <key>cronjob.status[{#CRONJOB}]</key>
+                     <delay>5m</delay>
+                     <history>2w</history>
+                     <trends>1w</trends>
+                     <description>Status of cronjob /var/log/cronjobs/{#CRONJOB} on {HOSTNAME}</description>
+                     <applications>
+                        <application>
+                           <name>Cronjobs</name>
+                        </application>
+                     </applications>
+                     <request_method>POST</request_method>
+                     <trigger_prototypes>
+                        <trigger_prototype>
+                           <expression>{last(#3)}&lt;&gt;0</expression>
+                           <name>Cronjob {#CRONJOB} on {HOSTNAME} exited with code {ITEM.LASTVALUE1}</name>
+                           <priority>AVERAGE</priority>
+                           <description>There is a warning (or error) in the log for {#CRONJOB} on {HOSTNAME}. This may indicate a problem running the cron, please check /var/logs/cronjobs/{#CRONJOB}.log for further information.</description>
+                           <tags>
+                              <tag>
+                                 <tag>service</tag>
+                                 <value>cronjobs</value>
+                              </tag>
+                           </tags>
+                        </trigger_prototype>
+                     </trigger_prototypes>
+                  </item_prototype>
+               </item_prototypes>
+               <graph_prototypes>
+                  <graph_prototype>
+                     <name>Cronjob status {#CRONJOB}</name>
+                     <graph_items>
+                        <graph_item>
+                           <color>0000AA</color>
+                           <item>
+                              <host>Template Cronjobs Auto</host>
+                              <key>cronjob.status[{#CRONJOB}]</key>
+                           </item>
+                        </graph_item>
+                     </graph_items>
+                  </graph_prototype>
+               </graph_prototypes>
+               <request_method>POST</request_method>
+            </discovery_rule>
+         </discovery_rules>
+      </template>
+   </templates>
+</zabbix_export>

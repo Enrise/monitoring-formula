@@ -1,0 +1,60 @@
+<?xml version="1.0" ?>
+<zabbix_export>
+   <version>4.4</version>
+   <date>2020-01-28T11:58:31Z</date>
+   <groups>
+      <group>
+         <name>Templates</name>
+      </group>
+   </groups>
+   <templates>
+      <template>
+         <template>Template App Rancid</template>
+         <name>Template App Rancid</name>
+         <groups>
+            <group>
+               <name>Templates</name>
+            </group>
+         </groups>
+         <applications>
+            <application>
+               <name>Rancid</name>
+            </application>
+         </applications>
+         <discovery_rules>
+            <discovery_rule>
+               <name>Discover Rancid backup files</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>rancid.discovery</key>
+               <delay>1h</delay>
+               <lifetime>0</lifetime>
+               <description>Discovers all rancid backup files</description>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>Rancid file {#FILE} age</name>
+                     <type>ZABBIX_ACTIVE</type>
+                     <key>vfs.file.time[{#FILE}]</key>
+                     <delay>1h</delay>
+                     <history>30d</history>
+                     <trends>30d</trends>
+                     <applications>
+                        <application>
+                           <name>Rancid</name>
+                        </application>
+                     </applications>
+                     <request_method>POST</request_method>
+                     <trigger_prototypes>
+                        <trigger_prototype>
+                           <expression>{now(0)} - {last(0)} &gt; 24h</expression>
+                           <name>Rancid: Backup of {#FILE} is &gt; 24 hours old</name>
+                           <priority>HIGH</priority>
+                        </trigger_prototype>
+                     </trigger_prototypes>
+                  </item_prototype>
+               </item_prototypes>
+               <request_method>POST</request_method>
+            </discovery_rule>
+         </discovery_rules>
+      </template>
+   </templates>
+</zabbix_export>

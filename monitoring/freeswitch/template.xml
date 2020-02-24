@@ -1,0 +1,243 @@
+<?xml version="1.0" ?>
+<zabbix_export>
+   <version>4.4</version>
+   <date>2020-01-28T11:58:33Z</date>
+   <groups>
+      <group>
+         <name>Templates</name>
+      </group>
+   </groups>
+   <templates>
+      <template>
+         <template>Template App FreeSWITCH Service</template>
+         <name>Template App FreeSWITCH Service</name>
+         <groups>
+            <group>
+               <name>Templates</name>
+            </group>
+         </groups>
+         <applications>
+            <application>
+               <name>FreeSWITCH</name>
+            </application>
+         </applications>
+         <items>
+            <item>
+               <name>Current calls count</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>freeswitch.calls-count</key>
+               <delay>60</delay>
+               <history>3d</history>
+               <units>calls</units>
+               <applications>
+                  <application>
+                     <name>FreeSWITCH</name>
+                  </application>
+               </applications>
+               <request_method>POST</request_method>
+            </item>
+            <item>
+               <name>Current channels count</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>freeswitch.channels-count</key>
+               <delay>60</delay>
+               <history>3d</history>
+               <units>channels</units>
+               <applications>
+                  <application>
+                     <name>FreeSWITCH</name>
+                  </application>
+               </applications>
+               <request_method>POST</request_method>
+            </item>
+            <item>
+               <name>Current client registrations</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>freeswitch.client.registrations</key>
+               <delay>120</delay>
+               <history>3d</history>
+               <units>registrations</units>
+               <applications>
+                  <application>
+                     <name>FreeSWITCH</name>
+                  </application>
+               </applications>
+            </item>
+            <item>
+               <name>Current sessions</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>freeswitch.sessions</key>
+               <delay>60</delay>
+               <history>3d</history>
+               <units>sessions</units>
+               <applications>
+                  <application>
+                     <name>FreeSWITCH</name>
+                  </application>
+               </applications>
+               <request_method>POST</request_method>
+            </item>
+            <item>
+               <name>Freeswitch processes</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>proc.num[freeswitch]</key>
+               <delay>30</delay>
+               <history>3d</history>
+               <applications>
+                  <application>
+                     <name>FreeSWITCH</name>
+                  </application>
+               </applications>
+               <request_method>POST</request_method>
+               <triggers>
+                  <trigger>
+                     <expression>{last(0)}&lt;1</expression>
+                     <name>No freeswitch process running</name>
+                     <priority>HIGH</priority>
+                  </trigger>
+               </triggers>
+            </item>
+         </items>
+         <discovery_rules>
+            <discovery_rule>
+               <name>Discover FreeSWITCH Gateways</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>freeswitch.gateway.discovery</key>
+               <delay>5m</delay>
+               <lifetime>60m</lifetime>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>Gateway {#FRIENDLYNAME} State</name>
+                     <type>ZABBIX_ACTIVE</type>
+                     <key>freeswitch.gateway.state[{#UID}]</key>
+                     <delay>60s</delay>
+                     <history>30d</history>
+                     <applications>
+                        <application>
+                           <name>FreeSWITCH</name>
+                        </application>
+                     </applications>
+                     <valuemap>
+                        <name>FreeSwitch SIP State</name>
+                     </valuemap>
+                     <request_method>POST</request_method>
+                     <trigger_prototypes>
+                        <trigger_prototype>
+                           <expression>{last(,5m)}=0</expression>
+                           <name>Gateway {#FRIENDLYNAME} is not registered</name>
+                           <priority>HIGH</priority>
+                           <dependencies>
+                              <dependency>
+                                 <name>Gateway {#FRIENDLYNAME} is not up</name>
+                                 <expression>{Template App FreeSWITCH Service:freeswitch.gateway.status[{#UID}].last(,5m)}=0</expression>
+                              </dependency>
+                           </dependencies>
+                        </trigger_prototype>
+                     </trigger_prototypes>
+                  </item_prototype>
+                  <item_prototype>
+                     <name>Gateway {#FRIENDLYNAME} Status</name>
+                     <type>ZABBIX_ACTIVE</type>
+                     <key>freeswitch.gateway.status[{#UID}]</key>
+                     <delay>60s</delay>
+                     <history>30d</history>
+                     <applications>
+                        <application>
+                           <name>FreeSWITCH</name>
+                        </application>
+                     </applications>
+                     <valuemap>
+                        <name>Service state</name>
+                     </valuemap>
+                     <request_method>POST</request_method>
+                     <trigger_prototypes>
+                        <trigger_prototype>
+                           <expression>{last(,5m)}=0</expression>
+                           <name>Gateway {#FRIENDLYNAME} is not up</name>
+                           <priority>HIGH</priority>
+                        </trigger_prototype>
+                     </trigger_prototypes>
+                  </item_prototype>
+                  <item_prototype>
+                     <name>Gateway {#FRIENDLYNAME} Uptime</name>
+                     <type>ZABBIX_ACTIVE</type>
+                     <key>freeswitch.gateway.uptime[{#UID}]</key>
+                     <delay>60s</delay>
+                     <history>30d</history>
+                     <units>seconds</units>
+                     <applications>
+                        <application>
+                           <name>FreeSWITCH</name>
+                        </application>
+                     </applications>
+                     <request_method>POST</request_method>
+                  </item_prototype>
+               </item_prototypes>
+               <request_method>POST</request_method>
+            </discovery_rule>
+         </discovery_rules>
+      </template>
+   </templates>
+   <graphs>
+      <graph>
+         <name>Freeswitch: Channels</name>
+         <graph_items>
+            <graph_item>
+               <color>6666FF</color>
+               <item>
+                  <host>Template App FreeSWITCH Service</host>
+                  <key>freeswitch.calls-count</key>
+               </item>
+            </graph_item>
+            <graph_item>
+               <sortorder>1</sortorder>
+               <color>00DD00</color>
+               <item>
+                  <host>Template App FreeSWITCH Service</host>
+                  <key>freeswitch.channels-count</key>
+               </item>
+            </graph_item>
+            <graph_item>
+               <sortorder>2</sortorder>
+               <color>DDDD00</color>
+               <item>
+                  <host>Template App FreeSWITCH Service</host>
+                  <key>freeswitch.sessions</key>
+               </item>
+            </graph_item>
+         </graph_items>
+      </graph>
+   </graphs>
+   <value_maps>
+      <value_map>
+         <name>FreeSwitch SIP State</name>
+         <mappings>
+            <mapping>
+               <value>0</value>
+               <newvalue>Not Registered</newvalue>
+            </mapping>
+            <mapping>
+               <value>1</value>
+               <newvalue>Registered</newvalue>
+            </mapping>
+            <mapping>
+               <value>2</value>
+               <newvalue>No Registration Needed</newvalue>
+            </mapping>
+         </mappings>
+      </value_map>
+      <value_map>
+         <name>Service state</name>
+         <mappings>
+            <mapping>
+               <value>0</value>
+               <newvalue>Down</newvalue>
+            </mapping>
+            <mapping>
+               <value>1</value>
+               <newvalue>Up</newvalue>
+            </mapping>
+         </mappings>
+      </value_map>
+   </value_maps>
+</zabbix_export>

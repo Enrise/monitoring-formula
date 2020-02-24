@@ -1,0 +1,71 @@
+<?xml version="1.0" ?>
+<zabbix_export>
+   <version>4.4</version>
+   <date>2020-01-28T11:58:25Z</date>
+   <groups>
+      <group>
+         <name>Templates</name>
+      </group>
+   </groups>
+   <templates>
+      <template>
+         <template>Template App Salt-Master</template>
+         <name>Template App Salt-Master</name>
+         <groups>
+            <group>
+               <name>Templates</name>
+            </group>
+         </groups>
+         <applications>
+            <application>
+               <name>Saltstack</name>
+            </application>
+         </applications>
+         <items>
+            <item>
+               <name>Number of salt-master processes</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>proc.num[salt-master]</key>
+               <delay>5m</delay>
+               <history>7d</history>
+               <trends>30d</trends>
+               <description>Salt-master is the process that ensures that the minions are provisioned. If it is not running it is not possible to do machine provisioning.</description>
+               <applications>
+                  <application>
+                     <name>Saltstack</name>
+                  </application>
+               </applications>
+               <request_method>POST</request_method>
+               <triggers>
+                  <trigger>
+                     <expression>{max(#3)}=0</expression>
+                     <name>Salt-master not running</name>
+                     <priority>HIGH</priority>
+                     <tags>
+                        <tag>
+                           <tag>service</tag>
+                           <value>salt-master</value>
+                        </tag>
+                     </tags>
+                  </trigger>
+               </triggers>
+            </item>
+            <item>
+               <name>Salt-master version</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>salt.master.version</key>
+               <delay>1h</delay>
+               <history>7d</history>
+               <trends>0</trends>
+               <value_type>CHAR</value_type>
+               <applications>
+                  <application>
+                     <name>Saltstack</name>
+                  </application>
+               </applications>
+               <request_method>POST</request_method>
+            </item>
+         </items>
+      </template>
+   </templates>
+</zabbix_export>

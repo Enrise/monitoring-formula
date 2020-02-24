@@ -1,0 +1,199 @@
+<?xml version="1.0" ?>
+<zabbix_export>
+   <version>4.4</version>
+   <date>2020-01-28T11:58:31Z</date>
+   <groups>
+      <group>
+         <name>Templates</name>
+      </group>
+   </groups>
+   <templates>
+      <template>
+         <template>Template App OpenVPN Clients</template>
+         <name>Template App OpenVPN Clients</name>
+         <description>Client Accounting addon to OpenVPN template</description>
+         <groups>
+            <group>
+               <name>Templates</name>
+            </group>
+         </groups>
+         <applications>
+            <application>
+               <name>Master Items</name>
+            </application>
+            <application>
+               <name>OpenVPN</name>
+            </application>
+            <application>
+               <name>VPN Clients</name>
+            </application>
+         </applications>
+         <discovery_rules>
+            <discovery_rule>
+               <name>OpenVPN Users</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>openvpn.discovery</key>
+               <delay>1h</delay>
+               <lifetime>1d</lifetime>
+               <description>Detect OpenVPN users</description>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>OpenVPN Client {#VPNUSER} - IP</name>
+                     <type>DEPENDENT</type>
+                     <key>openvpn[client_ip,{#VPNUSER}]</key>
+                     <delay>0</delay>
+                     <history>7d</history>
+                     <trends>0</trends>
+                     <value_type>CHAR</value_type>
+                     <applications>
+                        <application>
+                           <name>VPN Clients</name>
+                        </application>
+                     </applications>
+                     <preprocessing>
+                        <step>
+                           <type>JSONPATH</type>
+                           <params>$.client_ip</params>
+                        </step>
+                     </preprocessing>
+                     <master_item>
+                        <key>openvpn[client_stats,{#VPNUSER}]</key>
+                     </master_item>
+                     <trigger_prototypes/>
+                  </item_prototype>
+                  <item_prototype>
+                     <name>OpenVPN Client {#VPNUSER} - Status</name>
+                     <type>ZABBIX_ACTIVE</type>
+                     <key>openvpn[client_stats,{#VPNUSER}]</key>
+                     <delay>2m</delay>
+                     <history>0</history>
+                     <trends>0</trends>
+                     <value_type>TEXT</value_type>
+                     <description>Master Item for gathering client traffic</description>
+                     <applications>
+                        <application>
+                           <name>Master Items</name>
+                        </application>
+                     </applications>
+                  </item_prototype>
+                  <item_prototype>
+                     <name>OpenVPN Client {#VPNUSER} - Traffic Incoming</name>
+                     <type>DEPENDENT</type>
+                     <key>openvpn[client_traffic_rx,{#VPNUSER}]</key>
+                     <delay>0</delay>
+                     <history>14d</history>
+                     <trends>30d</trends>
+                     <units>bytes</units>
+                     <applications>
+                        <application>
+                           <name>VPN Clients</name>
+                        </application>
+                     </applications>
+                     <application_prototypes>
+                        <application_prototype>
+                           <name>VPN Clients</name>
+                        </application_prototype>
+                     </application_prototypes>
+                     <preprocessing>
+                        <step>
+                           <type>JSONPATH</type>
+                           <params>$.rx</params>
+                        </step>
+                     </preprocessing>
+                     <master_item>
+                        <key>openvpn[client_stats,{#VPNUSER}]</key>
+                     </master_item>
+                     <request_method>POST</request_method>
+                  </item_prototype>
+                  <item_prototype>
+                     <name>OpenVPN Client {#VPNUSER} - Traffic Outgoing</name>
+                     <type>DEPENDENT</type>
+                     <key>openvpn[client_traffic_tx,{#VPNUSER}]</key>
+                     <delay>0</delay>
+                     <history>14d</history>
+                     <trends>30d</trends>
+                     <units>bytes</units>
+                     <applications>
+                        <application>
+                           <name>VPN Clients</name>
+                        </application>
+                     </applications>
+                     <preprocessing>
+                        <step>
+                           <type>JSONPATH</type>
+                           <params>$.tx</params>
+                        </step>
+                     </preprocessing>
+                     <master_item>
+                        <key>openvpn[client_stats,{#VPNUSER}]</key>
+                     </master_item>
+                     <request_method>POST</request_method>
+                  </item_prototype>
+               </item_prototypes>
+               <trigger_prototypes>
+                  <trigger_prototype>
+                     <expression>{Template App OpenVPN Clients:openvpn[client_traffic_rx,{#VPNUSER}].last()} + {Template App OpenVPN Clients:openvpn[client_traffic_tx,{#VPNUSER}].last()} &gt; 1073741824</expression>
+                     <name>OpenVPN Client {#VPNUSER} Traffic Exceeds 1 GiB usage</name>
+                     <priority>AVERAGE</priority>
+                  </trigger_prototype>
+               </trigger_prototypes>
+               <graph_prototypes>
+                  <graph_prototype>
+                     <name>OpenVPN Client {#VPNUSER} Traffic</name>
+                     <type>STACKED</type>
+                     <graph_items>
+                        <graph_item>
+                           <color>1A7C11</color>
+                           <item>
+                              <host>Template App OpenVPN Clients</host>
+                              <key>openvpn[client_traffic_rx,{#VPNUSER}]</key>
+                           </item>
+                        </graph_item>
+                        <graph_item>
+                           <sortorder>1</sortorder>
+                           <color>F63100</color>
+                           <item>
+                              <host>Template App OpenVPN Clients</host>
+                              <key>openvpn[client_traffic_tx,{#VPNUSER}]</key>
+                           </item>
+                        </graph_item>
+                     </graph_items>
+                  </graph_prototype>
+               </graph_prototypes>
+               <request_method>POST</request_method>
+            </discovery_rule>
+         </discovery_rules>
+         <screens>
+            <screen>
+               <name>VPN Client Traffic</name>
+               <hsize>3</hsize>
+               <vsize>1</vsize>
+               <screen_items>
+                  <screen_item>
+                     <resourcetype>20</resourcetype>
+                     <style>0</style>
+                     <resource>
+                        <name>OpenVPN Client {#VPNUSER} Traffic</name>
+                        <host>Template App OpenVPN Clients</host>
+                     </resource>
+                     <width>500</width>
+                     <height>100</height>
+                     <x>0</x>
+                     <y>0</y>
+                     <colspan>1</colspan>
+                     <rowspan>1</rowspan>
+                     <elements>0</elements>
+                     <valign>0</valign>
+                     <halign>0</halign>
+                     <dynamic>0</dynamic>
+                     <sort_triggers>0</sort_triggers>
+                     <url/>
+                     <application/>
+                     <max_columns>3</max_columns>
+                  </screen_item>
+               </screen_items>
+            </screen>
+         </screens>
+      </template>
+   </templates>
+</zabbix_export>

@@ -1,0 +1,54 @@
+# Template for installing monitoring packages
+{%- set script_dir = salt['pillar.get']('monitoring-formula:script-dir','/opt/zabbix/scripts/') %}
+{%- set config_dir = salt['pillar.get']('monitoring-formula:config-dir','/etc/zabbix/zabbix_agentd.d/') %}
+{%- if salt['grains.get']('kernel', 'Linux') == 'Windows' %}
+{%- set script_dir = salt['pillar.get']('monitoring-formula:script-dir', "C:\\Enrise\\Zabbix\\Scripts\\")  %}
+{%- set config_dir = salt['pillar.get']('monitoring-formula:config-dir', "C:\\Program Files\\Zabbix Agent\\zabbix_agentd.d\\") %}
+{%- endif %}
+# Checks are generally required and thus included
+{%- if has_check is defined and has_check == True %}
+{{ script_dir }}{{ service_name }}-{{ check_file|default('check.sh') }}:
+  file.managed:
+    - source: 'salt://monitoring/{{ service_name }}/files/{{ check_file|default('check.sh') }}'
+    - mode: 775
+    - user: zabbix
+    - group: zabbix
+    - require:
+      - file: {{ script_dir }}
+{%- endif %}
+
+# Autodiscovery is generally not included, so excluded by default
+{%- if has_autodiscovery is defined and has_autodiscovery == True %}
+{{ script_dir }}{{ service_name }}-{{ discovery_file|default('autodiscovery.sh') }}:
+  file.managed:
+    - source: 'salt://monitoring/{{ service_name }}/files/{{ discovery_file|default('autodiscovery.sh') }}'
+    - mode: 775
+  {%- if salt['grains.get']('kernel', 'Linux') == 'Linux' %}
+    - user: zabbix
+    - group: zabbix
+  {%- endif %}
+    - require:
+      - file: {{ script_dir }}
+{%- endif %}
+
+# Params are generally mandatory
+{%- if has_params is not defined or has_params == True %}
+{{ config_dir }}params_{{ service_name }}.conf:
+  file.managed:
+    - source: 'salt://monitoring/{{ service_name }}/files/{{ params_file|default('params') }}.conf'
+    - template: jinja
+  {%- if salt['grains.get']('kernel', 'Linux') == 'Linux' %}
+    - user: zabbix
+    - group: zabbix
+  {%- endif %}
+    - require:
+      - pkg: zabbix-agent
+      {%- if has_check is defined and has_check == True %}
+      - file: {{script_dir}}{{ service_name }}-{{ check_file|default('check.sh') }}
+      {%- endif %}
+      {%- if has_autodiscovery is defined and has_autodiscovery == True %}
+      - file: {{script_dir}}{{ service_name }}-{{ discovery_file|default('autodiscovery.sh') }}
+      {%- endif %}
+    - watch_in:
+      - service: zabbix-agent
+{%- endif %}

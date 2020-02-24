@@ -1,0 +1,3 @@
+monitoring-formula:
+  script-dir: /opt/zabbix/scripts/
+  config-dir: /etc/zabbix/zabbix_agentd.d/

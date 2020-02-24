@@ -1,0 +1,124 @@
+<?xml version="1.0" ?>
+<zabbix_export>
+   <version>4.4</version>
+   <date>2020-01-28T11:58:21Z</date>
+   <groups>
+      <group>
+         <name>Templates</name>
+      </group>
+   </groups>
+   <templates>
+      <template>
+         <template>Template App Asterisk</template>
+         <name>Template App Asterisk</name>
+         <groups>
+            <group>
+               <name>Templates</name>
+            </group>
+         </groups>
+         <applications>
+            <application>
+               <name>Asterisk</name>
+            </application>
+         </applications>
+         <items>
+            <item>
+               <name>Trunk status</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>sip.status</key>
+               <history>2d</history>
+               <trends>0</trends>
+               <status>DISABLED</status>
+               <value_type>TEXT</value_type>
+               <applications>
+                  <application>
+                     <name>Asterisk</name>
+                  </application>
+               </applications>
+               <request_method>POST</request_method>
+               <triggers>
+                  <trigger>
+                     <expression>{str(Registered,#2)}&lt;&gt;1</expression>
+                     <name>SIP trunk down on {HOSTNAME}</name>
+                     <priority>HIGH</priority>
+                     <description>SIP trunk is down, we are unreachable and cannot call out.</description>
+                  </trigger>
+               </triggers>
+            </item>
+         </items>
+         <discovery_rules>
+            <discovery_rule>
+               <name>Discover Asterisk accounts</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>asterisk.account.discovery</key>
+               <delay>1h</delay>
+               <lifetime>0</lifetime>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>Asterisk Peer Status $1</name>
+                     <type>ZABBIX_ACTIVE</type>
+                     <key>asterisk.peer.status[{#TRUNK}]</key>
+                     <history>30d</history>
+                     <trends>7d</trends>
+                     <applications>
+                        <application>
+                           <name>Asterisk</name>
+                        </application>
+                     </applications>
+                     <valuemap>
+                        <name>Not Ok / OK check</name>
+                     </valuemap>
+                     <request_method>POST</request_method>
+                     <trigger_prototypes>
+                        <trigger_prototype>
+                           <expression>{last(5m)}&lt;&gt;1</expression>
+                           <name>Peer {#TRUNK} not reachable</name>
+                           <priority>HIGH</priority>
+                        </trigger_prototype>
+                     </trigger_prototypes>
+                  </item_prototype>
+                  <item_prototype>
+                     <name>Asterisk Trunk Status $1</name>
+                     <type>ZABBIX_ACTIVE</type>
+                     <key>asterisk.trunk.status[{#TRUNK}]</key>
+                     <history>30d</history>
+                     <trends>7d</trends>
+                     <applications>
+                        <application>
+                           <name>Asterisk</name>
+                        </application>
+                     </applications>
+                     <valuemap>
+                        <name>Not Ok / OK check</name>
+                     </valuemap>
+                     <request_method>POST</request_method>
+                     <trigger_prototypes>
+                        <trigger_prototype>
+                           <expression>{last(5m)}&lt;&gt;1</expression>
+                           <name>Trunk {#TRUNK} not registered</name>
+                           <priority>HIGH</priority>
+                        </trigger_prototype>
+                     </trigger_prototypes>
+                  </item_prototype>
+               </item_prototypes>
+               <request_method>POST</request_method>
+            </discovery_rule>
+         </discovery_rules>
+      </template>
+   </templates>
+   <value_maps>
+      <value_map>
+         <name>Not Ok / OK check</name>
+         <mappings>
+            <mapping>
+               <value>0</value>
+               <newvalue>Not OK</newvalue>
+            </mapping>
+            <mapping>
+               <value>1</value>
+               <newvalue>OK</newvalue>
+            </mapping>
+         </mappings>
+      </value_map>
+   </value_maps>
+</zabbix_export>

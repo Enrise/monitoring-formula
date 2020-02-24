@@ -1,0 +1,89 @@
+<?xml version="1.0" ?>
+<zabbix_export>
+   <version>4.4</version>
+   <date>2020-01-28T11:58:32Z</date>
+   <groups>
+      <group>
+         <name>Templates</name>
+      </group>
+   </groups>
+   <templates>
+      <template>
+         <template>Template App IIS Sites</template>
+         <name>Template App IIS Sites</name>
+         <groups>
+            <group>
+               <name>Templates</name>
+            </group>
+         </groups>
+         <applications>
+            <application>
+               <name>IIS APP Pool</name>
+            </application>
+            <application>
+               <name>IIS Site</name>
+            </application>
+         </applications>
+         <discovery_rules>
+            <discovery_rule>
+               <name>IIS AppPool</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>apppool.discovery</key>
+               <delay>1h</delay>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>IIS AppPool {#APPPOOL}</name>
+                     <key>apppool.state[{#APPPOOL}]</key>
+                     <delay>2m</delay>
+                     <trends>0</trends>
+                     <value_type>TEXT</value_type>
+                     <applications>
+                        <application>
+                           <name>IIS APP Pool</name>
+                        </application>
+                     </applications>
+                     <request_method>POST</request_method>
+                     <trigger_prototypes>
+                        <trigger_prototype>
+                           <expression>{str(Stopped)}&lt;&gt;0</expression>
+                           <name>IIS AppPool {#APPPOOL} is down</name>
+                           <priority>DISASTER</priority>
+                        </trigger_prototype>
+                     </trigger_prototypes>
+                  </item_prototype>
+               </item_prototypes>
+               <request_method>POST</request_method>
+            </discovery_rule>
+            <discovery_rule>
+               <name>IIS Site</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>site.discovery</key>
+               <delay>1h</delay>
+               <item_prototypes>
+                  <item_prototype>
+                     <name>IIS Site {#SITE}</name>
+                     <key>site.state[{#SITE}]</key>
+                     <delay>2m</delay>
+                     <trends>0</trends>
+                     <value_type>TEXT</value_type>
+                     <applications>
+                        <application>
+                           <name>IIS Site</name>
+                        </application>
+                     </applications>
+                     <request_method>POST</request_method>
+                     <trigger_prototypes>
+                        <trigger_prototype>
+                           <expression>{str(Stopped)}&lt;&gt;0</expression>
+                           <name>IIS SIte {#SITE} is down</name>
+                           <priority>DISASTER</priority>
+                        </trigger_prototype>
+                     </trigger_prototypes>
+                  </item_prototype>
+               </item_prototypes>
+               <request_method>POST</request_method>
+            </discovery_rule>
+         </discovery_rules>
+      </template>
+   </templates>
+</zabbix_export>

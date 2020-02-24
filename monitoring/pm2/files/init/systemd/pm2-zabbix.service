@@ -1,0 +1,11 @@
+[Unit]
+Description=PM2 monitor for Zabbix
+After=network.target remote-fs.target
+
+[Service]
+Type=simple
+User={{ salt['pillar.get']('node:pm2:daemon-user', 'enrise') }}
+ExecStart=/usr/bin/pm2-zabbix --monitor
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,264 @@
+<?xml version="1.0" ?>
+<zabbix_export>
+   <version>4.4</version>
+   <date>2020-01-28T11:58:41Z</date>
+   <groups>
+      <group>
+         <name>Templates/Applications</name>
+      </group>
+   </groups>
+   <templates>
+      <template>
+         <template>Template App APCUPSD</template>
+         <name>Template App APCUPSD</name>
+         <groups>
+            <group>
+               <name>Templates/Applications</name>
+            </group>
+         </groups>
+         <applications>
+            <application>
+               <name>APC UPS</name>
+            </application>
+         </applications>
+         <items>
+            <item>
+               <name>Battery charge</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>apcupsd[BCHARGE]</key>
+               <delay>4m</delay>
+               <status>DISABLED</status>
+               <value_type>FLOAT</value_type>
+               <units>%</units>
+               <applications>
+                  <application>
+                     <name>APC UPS</name>
+                  </application>
+               </applications>
+               <preprocessing>
+                  <step>
+                     <type>JAVASCRIPT</type>
+                     <params>if (value == &quot;ONLINE&quot;) { return 1;} return 0;</params>
+                  </step>
+               </preprocessing>
+            </item>
+            <item>
+               <name>Type of connection to UPS</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>apcupsd[CABLE]</key>
+               <delay>12h</delay>
+               <trends>0</trends>
+               <status>DISABLED</status>
+               <value_type>CHAR</value_type>
+               <applications>
+                  <application>
+                     <name>APC UPS</name>
+                  </application>
+               </applications>
+            </item>
+            <item>
+               <name>Driver used for connection to UPS</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>apcupsd[DRIVER]</key>
+               <delay>12h</delay>
+               <trends>0</trends>
+               <status>DISABLED</status>
+               <value_type>CHAR</value_type>
+               <applications>
+                  <application>
+                     <name>APC UPS</name>
+                  </application>
+               </applications>
+            </item>
+            <item>
+               <name>Temperature of UPS Battery</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>apcupsd[ITEMP]</key>
+               <delay>5m</delay>
+               <status>DISABLED</status>
+               <value_type>FLOAT</value_type>
+               <units>celsius</units>
+               <applications>
+                  <application>
+                     <name>APC UPS</name>
+                  </application>
+               </applications>
+            </item>
+            <item>
+               <name>Line voltage</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>apcupsd[LINEV]</key>
+               <delay>2m</delay>
+               <status>DISABLED</status>
+               <value_type>FLOAT</value_type>
+               <units>Volts</units>
+               <applications>
+                  <application>
+                     <name>APC UPS</name>
+                  </application>
+               </applications>
+               <preprocessing>
+                  <step>
+                     <type>JAVASCRIPT</type>
+                     <params>if (value == &quot;ONLINE&quot;) { return 1;} return 0;</params>
+                  </step>
+               </preprocessing>
+            </item>
+            <item>
+               <name>Load percentage</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>apcupsd[LOADPCT]</key>
+               <delay>5m</delay>
+               <status>DISABLED</status>
+               <value_type>FLOAT</value_type>
+               <units>%</units>
+               <applications>
+                  <application>
+                     <name>APC UPS</name>
+                  </application>
+               </applications>
+               <preprocessing>
+                  <step>
+                     <type>JAVASCRIPT</type>
+                     <params>if (value == &quot;ONLINE&quot;) { return 1;} return 0;</params>
+                  </step>
+               </preprocessing>
+            </item>
+            <item>
+               <name>Model of UPS</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>apcupsd[MODEL]</key>
+               <delay>12h</delay>
+               <trends>0</trends>
+               <status>DISABLED</status>
+               <value_type>CHAR</value_type>
+               <applications>
+                  <application>
+                     <name>APC UPS</name>
+                  </application>
+               </applications>
+            </item>
+            <item>
+               <name>Status of selftest</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>apcupsd[SELFTEST]</key>
+               <delay>2m</delay>
+               <trends>0</trends>
+               <value_type>CHAR</value_type>
+               <applications>
+                  <application>
+                     <name>APC UPS</name>
+                  </application>
+               </applications>
+               <valuemap>
+                  <name>Not Ok / OK check</name>
+               </valuemap>
+               <preprocessing>
+                  <step>
+                     <type>JAVASCRIPT</type>
+                     <params>if (value == &quot;OK&quot;) { return 1;} return 0;</params>
+                  </step>
+               </preprocessing>
+            </item>
+            <item>
+               <name>Status of connection to UPS</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>apcupsd[STATUS]</key>
+               <delay>2m</delay>
+               <trends>0</trends>
+               <value_type>CHAR</value_type>
+               <applications>
+                  <application>
+                     <name>APC UPS</name>
+                  </application>
+               </applications>
+               <valuemap>
+                  <name>Not Ok / OK check</name>
+               </valuemap>
+               <preprocessing>
+                  <step>
+                     <type>JAVASCRIPT</type>
+                     <params>if (value == &quot;ONLINE&quot;) { return 1;} return 0;</params>
+                  </step>
+               </preprocessing>
+               <triggers>
+                  <trigger>
+                     <expression>{last()}=0</expression>
+                     <name>APCUPSD on {HOST.NAME} disconnected from UPS</name>
+                     <priority>HIGH</priority>
+                     <description>This may result in the server not being shutdown when the battery is nearly depleted.</description>
+                  </trigger>
+               </triggers>
+            </item>
+            <item>
+               <name>Battery Time Left</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>apcupsd[TIMELEFT]</key>
+               <delay>4m</delay>
+               <status>DISABLED</status>
+               <value_type>FLOAT</value_type>
+               <units>Minutes</units>
+               <applications>
+                  <application>
+                     <name>APC UPS</name>
+                  </application>
+               </applications>
+               <preprocessing>
+                  <step>
+                     <type>JAVASCRIPT</type>
+                     <params>if (value == &quot;ONLINE&quot;) { return 1;} return 0;</params>
+                  </step>
+               </preprocessing>
+            </item>
+            <item>
+               <name>Mode of UPS</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>apcupsd[UPSMODE]</key>
+               <delay>12h</delay>
+               <trends>0</trends>
+               <status>DISABLED</status>
+               <value_type>CHAR</value_type>
+               <applications>
+                  <application>
+                     <name>APC UPS</name>
+                  </application>
+               </applications>
+            </item>
+            <item>
+               <name>Name of detected UPS</name>
+               <type>ZABBIX_ACTIVE</type>
+               <key>apcupsd[UPSNAME]</key>
+               <delay>12h</delay>
+               <trends>0</trends>
+               <value_type>CHAR</value_type>
+               <applications>
+                  <application>
+                     <name>APC UPS</name>
+                  </application>
+               </applications>
+               <preprocessing>
+                  <step>
+                     <type>DISCARD_UNCHANGED_HEARTBEAT</type>
+                     <params>1d</params>
+                  </step>
+               </preprocessing>
+            </item>
+         </items>
+      </template>
+   </templates>
+   <value_maps>
+      <value_map>
+         <name>Not Ok / OK check</name>
+         <mappings>
+            <mapping>
+               <value>0</value>
+               <newvalue>Not OK</newvalue>
+            </mapping>
+            <mapping>
+               <value>1</value>
+               <newvalue>OK</newvalue>
+            </mapping>
+         </mappings>
+      </value_map>
+   </value_maps>
+</zabbix_export>
