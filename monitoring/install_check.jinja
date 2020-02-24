@@ -2,7 +2,7 @@
 {%- set script_dir = salt['pillar.get']('monitoring-formula:script-dir','/opt/zabbix/scripts/') %}
 {%- set config_dir = salt['pillar.get']('monitoring-formula:config-dir','/etc/zabbix/zabbix_agentd.d/') %}
 {%- if salt['grains.get']('kernel', 'Linux') == 'Windows' %}
-{%- set script_dir = salt['pillar.get']('monitoring-formula:script-dir', "C:\\Enrise\\Zabbix\\Scripts\\")  %}
+{%- set script_dir = salt['pillar.get']('monitoring-formula:script-dir', "C:\\Program Files\\Zabbix Agent\\Scripts\\")  %}
 {%- set config_dir = salt['pillar.get']('monitoring-formula:config-dir', "C:\\Program Files\\Zabbix Agent\\zabbix_agentd.d\\") %}
 {%- endif %}
 # Checks are generally required and thus included
