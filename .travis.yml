@@ -2,6 +2,8 @@ language: python
 python:
 - '3.7'
 
+dist: bionic
+
 env:
   global:
     - BS_PIP_ALLOWED=1
