@@ -9,11 +9,6 @@ env:
     - BS_PIP_ALLOWED=1
     - BS_ECHO_DEBUG=1
     - STATE=monitoring.ci,monitoring
-  matrix:
-    # Test latest 2019-build
-    - SALT_VERSION="v2019.2.3"
-      SALT_ARGS="-l debug --local --retcode-passthrough --pillar-root=.salt/pillar --file-root=$PWD"
-    # Test new 3000 versioning
     - SALT_VERSION="stable"
       SALT_ARGS="-l debug --local --retcode-passthrough --pillar-root=.salt/pillar --file-root=$PWD"
 
