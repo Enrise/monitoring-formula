@@ -14,8 +14,6 @@
     - mode: 775
     - user: zabbix
     - group: zabbix
-    - require:
-      - file: {{ script_dir }}
 {%- endif %}
 
 # Autodiscovery is generally not included, so excluded by default
@@ -29,8 +27,6 @@
     - user: zabbix
     - group: zabbix
   {%- endif %}
-    - require:
-      - file: {{ script_dir }}
 {%- endif %}
 
 # Params are generally mandatory
