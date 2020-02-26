@@ -9,4 +9,3 @@ monitoring:
     - mysql
     - salt-minion
     - vnstat
-    - phpfpm
