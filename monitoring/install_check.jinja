@@ -10,11 +10,10 @@
 {{ script_dir }}{{ service_name }}-{{ check_file|default('check.sh') }}:
   file.managed:
     - source: 'salt://monitoring/{{ service_name }}/files/{{ check_file|default('check.sh') }}'
+    - makedirs: True
     - mode: 775
     - user: zabbix
     - group: zabbix
-    - require:
-      - file: {{ script_dir }}
 {%- endif %}
 
 # Autodiscovery is generally not included, so excluded by default
@@ -23,12 +22,11 @@
   file.managed:
     - source: 'salt://monitoring/{{ service_name }}/files/{{ discovery_file|default('autodiscovery.sh') }}'
     - mode: 775
+    - makedirs: True
   {%- if salt['grains.get']('kernel', 'Linux') == 'Linux' %}
     - user: zabbix
     - group: zabbix
   {%- endif %}
-    - require:
-      - file: {{ script_dir }}
 {%- endif %}
 
 # Params are generally mandatory
@@ -37,6 +35,7 @@
   file.managed:
     - source: 'salt://monitoring/{{ service_name }}/files/{{ params_file|default('params') }}.conf'
     - template: jinja
+    - makedirs: True
   {%- if salt['grains.get']('kernel', 'Linux') == 'Linux' %}
     - user: zabbix
     - group: zabbix
