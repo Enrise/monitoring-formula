@@ -15,8 +15,7 @@ env:
 
 before_install:
   - sudo apt-get update
-  - curl -L http://bootstrap.saltstack.org | sudo -E sh -s -- stable -x python3.7
-
+  - curl -L http://bootstrap.saltstack.org | sudo -E sh -s -- -x python3.7 stable 
 install:
   - sudo mkdir -p /srv && sudo ln -sfn $PWD /srv/formula
   # Show the loaded pillars since the states are generally depending on this
