@@ -11,6 +11,11 @@ monitoring:
     - vnstat
     #- docker # Since the travis image contains docker, this will be auto-detected
 
+# Zabbix config
+zabbix:
+  lookup:
+      version_repo: 4.4
+
 # Zabbix-agent config
 zabbix-agent:
    include: /etc/zabbix/zabbix_agentd.d/*.conf
