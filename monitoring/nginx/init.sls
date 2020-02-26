@@ -6,6 +6,7 @@
 # Additional actions required for this plugin
 /etc/nginx/conf.d/monitoring.conf:
   file.managed:
+    - template: jinja
     - source: 'salt://monitoring/nginx/files/vhost.conf'
     - require:
       - pkg: nginx
