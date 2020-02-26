@@ -9,3 +9,8 @@ monitoring:
     - mysql
     - salt-minion
     - vnstat
+    #- docker # Since the travis image contains docker, this will be auto-detected
+
+# Zabbix-agent config
+zabbix-agent:
+   include: /etc/zabbix/zabbix_agentd.d/*.conf

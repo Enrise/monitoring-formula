@@ -8,14 +8,20 @@ env:
   global:
     - BS_PIP_ALLOWED=1
     - BS_ECHO_DEBUG=1
-    - STATE=monitoring
+    - STATE=monitoring.ci,monitoring
   matrix:
-    - SALT_ARGS="-l debug --local --retcode-passthrough --pillar-root=.salt/pillar --file-root=$PWD"
-
+    # Test latest 2019-build
+    - SALT_VERSION="2019.2"
+      SALT_ARGS="-l debug --local --retcode-passthrough --pillar-root=.salt/pillar --file-root=$PWD"
+    # Test new 3000 versioning
+    - SALT_VERSION="stable"
+      SALT_ARGS="-l debug --local --retcode-passthrough --pillar-root=.salt/pillar --file-root=$PWD"
 
 before_install:
+  # Install Zabbix formula
+  - sudo git clone https://github.com/saltstack-formulas/zabbix-formula.git $PWD/zabbix-formula && ln -sfn $PWD/zabbix-formula/nginx $PWD/zabbix
   - sudo apt-get update
-  - curl -L http://bootstrap.saltstack.org | sudo -E sh -s -- -x python3.7 stable 
+  - curl -L http://bootstrap.saltstack.org | sudo -E sh -s -- -x python3.7 stable
 install:
   - sudo mkdir -p /srv && sudo ln -sfn $PWD /srv/formula
   # Show the loaded pillars since the states are generally depending on this
