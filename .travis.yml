@@ -19,7 +19,7 @@ env:
 
 before_install:
   # Install Zabbix formula
-  - sudo git clone https://github.com/saltstack-formulas/zabbix-formula.git $PWD/zabbix-formula && ln -sfn $PWD/zabbix-formula/nginx $PWD/zabbix
+  - sudo git clone https://github.com/saltstack-formulas/zabbix-formula.git $PWD/zabbix-formula && ln -sfn $PWD/zabbix-formula/zabbix $PWD/zabbix
   - sudo apt-get update
   - curl -L http://bootstrap.saltstack.org | sudo -E sh -s -- -x python3.7 ${SALT_VERSION}
 install:
