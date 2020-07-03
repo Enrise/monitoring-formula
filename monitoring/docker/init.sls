@@ -18,7 +18,7 @@ docker_monitoring_deps:
   pip.installed:
     - name: docker-py
     - reload_modules: true
-    - bin_env: /usr/bin/pip{{ python_major_version }}
+    - bin_env: /usr/local/bin/pip{{ python_major_version }}
     - require:
       - pkg: docker_monitoring_deps
     - require_in:
